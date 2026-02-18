@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="panel">
+<h2>Your Cart</h2>
+{% if order.is_empty() %}
+<p>Your cart is empty.</p>
+<div class="actions">
+  <a class="button-link" href="{{ url_for('index') }}">Browse Menu</a>
+</div>
+{% else %}
+<div class="table-wrap">
+<table>
+<tr><th>Item</th><th>Qty</th><th>Price</th><th>Update</th></tr>
+{% for item, qty in order.items.items() %}
+<tr>
+  <td>{{ item|title }}</td>
+  <td>{{ qty }}</td>
+  <td>{{ menu.get_price(item) * qty }}</td>
+  <td>
+    <form action="{{ url_for('update_item') }}" method="post" class="row-actions">
+      <input type="hidden" name="item" value="{{ item }}">
+      <input type="number" name="quantity" value="{{ qty }}" min="0">
+      <button type="submit">Update</button>
+    </form>
+  </td>
+</tr>
+{% endfor %}
+<tr><td colspan="3"><strong>Total</strong></td><td><strong>{{ order.total() }}</strong></td></tr>
+</table>
+</div>
+<div class="actions">
+  <form action="{{ url_for('checkout') }}" method="post">
+      <button type="submit">Checkout</button>
+  </form>
+  <a class="button-link" href="{{ url_for('index') }}">Back to Menu</a>
+</div>
+{% endif %}
+</section>
+{% endblock %}
